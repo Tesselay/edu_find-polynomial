@@ -10,6 +10,13 @@ public class Main {
         Scanner input_scanner = new Scanner(System.in);
         String user_poly = input_scanner.next();            // test_poly = x^2-x+3x-x^1
 
+        Pattern disallowed = Pattern.compile("[^a-z0-9^\\-+*]");
+        Matcher disallowed_m = disallowed.matcher(user_poly);
+        if( disallowed_m.find() ) {
+            System.err.println("Illegal characters found!");
+            System.exit(0);
+        }
+
 	    Pattern neg_exp = Pattern.compile("\\^-");
         Matcher neg_exp_m = neg_exp.matcher(user_poly);
         if( neg_exp_m.find() ) {
@@ -21,13 +28,6 @@ public class Main {
         Matcher vars_m = vars.matcher(user_poly);
         if( !vars_m.find() ) {
             System.err.println("No indeterminates found! (Note: only indeterminates in lowercase are found.)");
-            System.exit(0);
-        }
-
-        Pattern sqrt = Pattern.compile("(sqrt)");
-        Matcher sqrt_m = sqrt.matcher(user_poly);
-        if( sqrt_m.find() ) {
-            System.err.println("Polynomials don't allow squareroots!");
             System.exit(0);
         }
 
@@ -57,6 +57,8 @@ public class Main {
         if( highest_degree == -1 )
             highest_degree = 1;         // If no degree specified, it is expected that only indeterminates without exponent are specified (which means they have a degree of 1)
         System.out.printf("The highest degree is: %d", highest_degree);
+
+        System.exit(1);
 
     }
 }
