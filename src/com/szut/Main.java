@@ -8,31 +8,41 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner input_scanner = new Scanner(System.in);
-        String user_input = input_scanner.next();
+        String user_poly = input_scanner.next();            // test_poly = x^2-x+3x-x^1
 
 	    Pattern neg_exp = Pattern.compile("\\^-");
-        Matcher neg_exp_m = neg_exp.matcher(user_input);
+        Matcher neg_exp_m = neg_exp.matcher(user_poly);
         if( neg_exp_m.find() ) {
             System.err.println("Negative Exponent found! No Polynomial.");
             System.exit(0);
         }
 
         Pattern vars = Pattern.compile("[a-z]*");
-        Matcher vars_m = vars.matcher(user_input);
+        Matcher vars_m = vars.matcher(user_poly);
         if( !vars_m.find() ) {
             System.err.println("No indeterminates found! (Note: only indeterminates in lowercase are found.)");
             System.exit(0);
         }
 
         Pattern sqrt = Pattern.compile("(sqrt)");
-        Matcher sqrt_m = sqrt.matcher(user_input);
+        Matcher sqrt_m = sqrt.matcher(user_poly);
         if( sqrt_m.find() ) {
             System.err.println("Polynomials don't allow squareroots!");
             System.exit(0);
         }
 
+        Pattern degree_p = Pattern.compile("(\\^[0-9])");
+        Matcher degree_m = degree_p.matcher(user_poly);
+        int highest_degree = -1;
+        while( degree_m.find() ){
+            String[] string_degree = degree_m.group(degree_m.groupCount()-1).split("[\\^]");
+            int degree = Integer.parseInt(string_degree[1]);
+            if( degree > highest_degree )
+                highest_degree = degree;
+        }
+
         Pattern term_splitter = Pattern.compile("([+-]?[^-+]+)");       // Matches every group once and separate from other groups
-        Matcher term_splitter_m = term_splitter.matcher(user_input);
+        Matcher term_splitter_m = term_splitter.matcher(user_poly);
 
         if( term_splitter_m.groupCount() <= 0 ) {
             System.err.println("No Polynomials found!");
@@ -43,6 +53,10 @@ public class Main {
         while( term_splitter_m.find() ){
             System.out.println(term_splitter_m.group(term_splitter_m.groupCount()-1));
         }
+
+        if( highest_degree == -1 )
+            highest_degree = 1;         // If no degree specified, it is expected that only indeterminates without exponent are specified (which means they have a degree of 1)
+        System.out.printf("The highest degree is: %d", highest_degree);
 
     }
 }
